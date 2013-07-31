@@ -27,7 +27,7 @@ local.properties
 .project
 
 
-
+*.db
 
 # Compiled Object files
 *.slo
