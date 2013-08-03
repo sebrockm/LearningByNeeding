@@ -1,11 +1,12 @@
 package model;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -99,7 +100,7 @@ public class SQLManager {
 					continue;		
 				String german = tok.nextToken();
 				
-				String type = "other";
+				String type = "";
 				if(tok.hasMoreTokens())
 					type = tok.nextToken();
 
@@ -138,6 +139,19 @@ public class SQLManager {
 		stmt.close();
 		rs.close();
 		
+		Collections.sort(res, new Comparator<String[]>(){
+
+			@Override
+			public int compare(String[] arg0, String[] arg1) {
+				int diff = arg0[0].length() - arg1[0].length();
+				if(diff != 0)
+					return diff;
+				
+				return arg0[1].length() - arg1[1].length();
+			}
+			
+		});
+		
 		return res;
 	}
 	
@@ -158,6 +172,19 @@ public class SQLManager {
 		
 		stmt.close();
 		rs.close();
+		
+		Collections.sort(res, new Comparator<String[]>(){
+
+			@Override
+			public int compare(String[] arg0, String[] arg1) {
+				int diff = arg0[0].length() - arg1[0].length();
+				if(diff != 0)
+					return diff;
+				
+				return arg0[1].length() - arg1[1].length();
+			}
+			
+		});
 		
 		return res;
 	}
