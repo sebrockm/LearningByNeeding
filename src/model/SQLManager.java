@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.sql.*;
 import java.util.Collections;
 import java.util.Comparator;
@@ -199,15 +201,42 @@ public class SQLManager {
 	public static void main(String[] args)
 	{
 		SQLManager myMgr = null;
+		BufferedReader buf = null;
 		try
 		{			
 			myMgr = new SQLManager("test.db");
 			//myMgr.truncate();
 			//myMgr.insertEntriesFromFile("../Downloads/conmkfoffm-8415581224-e7eeu8.txt");
-			List<String[]> list = myMgr.searchForEnglish("took", false);
-			for(String[] ary : list)
+			
+			VocabularyBox box = new VocabularyBox();
+			buf = new BufferedReader(new InputStreamReader(System.in));
+			String line = null;
+			System.out.println("Have fun!");
+			while(!(line = buf.readLine()).equals("q"))
 			{
-				System.out.println(ary[0] + " - " + ary[1] + "\t\t" + ary[2]);
+				if(line.equals("n"))
+				{
+					System.out.println("new vocabulary:");
+					box.insert(buf.readLine());
+				}
+				else
+				{
+					int c = Integer.parseInt(line);
+					System.out.println(box.getVocabInCase(c));
+					buf.readLine();
+					List<String[]> germans = myMgr.searchForEnglish(box.getVocabInCase(c), true);
+					for(String[] g : germans)
+					{
+						System.out.println(g[0] + " - " + g[1] + "\t" + g[2]);
+					}
+					System.out.println("your answer was correct (j)?");
+					box.answerVocabInCase(c, buf.readLine().equals("j"));	
+				}
+				int[] amount = box.getCaseVolumes();
+				for(int i=0; i<amount.length; i++)
+				{
+					System.out.println("case " + i + ": " + amount[i]);
+				}
 			}
 		}
 		catch(Exception e)
@@ -221,6 +250,14 @@ public class SQLManager {
 				try {
 					myMgr.close();
 				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(buf != null)
+			{
+				try {
+					buf.close();
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
