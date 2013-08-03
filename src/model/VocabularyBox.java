@@ -55,11 +55,11 @@ public class VocabularyBox {
 	}
 	
 	/**
-	 * Returns the number of cases this VocabularyBox consists of.
+	 * Retrieves the number of cases this VocabularyBox consists of.
 	 * 
 	 * @return The number of cases.
 	 */
-	public int getSize()
+	public int getNumberOfCases()
 	{
 		return size;
 	}
@@ -134,7 +134,7 @@ public class VocabularyBox {
 	 * @return The first vocabulary in the case with the number caseNo or null if that case is empty.
 	 * @throws IllegalArgumentException if caseNo is not in [0,size[.
 	 */
-	String getVocabInCase(int caseNo)
+	public String getVocabInCase(int caseNo)
 	{
 		checkCaseNo(caseNo);
 		
@@ -151,7 +151,7 @@ public class VocabularyBox {
 	 * @throws NoSuchElementException if the given case is empty.
 	 * @throws IllegalArgumentException if caseNo is not in [0,size[.
 	 */
-	void answerVocabInCase(int caseNo, boolean correct)
+	public void answerVocabInCase(int caseNo, boolean correct)
 	{
 		checkCaseNo(caseNo);
 		
@@ -172,10 +172,40 @@ public class VocabularyBox {
 	 * @param caseNo The number of the case to be shuffled.
 	 * @throws IllegalArgumentException if caseNo is not in [0,size[.
 	 */
-	void shuffleCase(int caseNo)
+	public void shuffleCase(int caseNo)
 	{
 		checkCaseNo(caseNo);
 		
 		Collections.shuffle((LinkedList<String>)cases[caseNo]);
+	}
+	
+	/**
+	 * Retrieves an array indicating the amount of vocabularies in each case.
+	 * @return An array indicating the the amount of vocabularies in each case.
+	 */
+	public int[] getCaseVolumes()
+	{
+		int[] res = new int[size];
+		for(int i=0; i<size; i++)
+		{
+			res[i] = cases[i].size();
+		}
+		
+		return res;
+	}
+	
+	/**
+	 * Retrieves the total amount of all vocabularies in this VocabularyBox.
+	 * @return The total amount of vocabularies.
+	 */
+	public int getVolume()
+	{
+		int res = 0;
+		for(int i=0; i<size; i++)
+		{
+			res += cases[i].size();
+		}
+		
+		return res;
 	}
 }
