@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Queue;
@@ -11,21 +12,21 @@ import java.util.LinkedList;
  * numbers 0, 1, 2, 3, 4. Case 0 contains those vocabularies you do not know yet while the case with the highest number contains those
  * you (should) know very well. Every time you answer a vocabulary correctly it is put into the next case
  * (respectively it stays in the last case since there is no next case). If your answer was wrong, the vocabulary goes
- * back into case 0. The cases are FIFO treated. The Vocabularies are only stored with their foreign language part. The counter part
+ * back into case 0. The Vocabularies are only stored with their foreign language part. The counter part
  * in your native language has to be looked up somewhere else. E.g. if you are a German learning the pair "freedom - Freiheit", only
  * "freedom" is stored in the VocabularyBox.
  * 
  */
-public class VocabularyBox {
+public class VocabularyBox implements Serializable{
 
-	private int size;
+	private static final long serialVersionUID = 1917951796892188357L;
 	
 	private Queue<String>[] cases;
 	
 	private void checkCaseNo(int caseNo)
 	{
-		if(caseNo < 0 || caseNo >= size)
-			throw new IllegalArgumentException("Invalid case number! Must be between 0 and " + (size-1));
+		if(caseNo < 0 || caseNo >= getNumberOfCases())
+			throw new IllegalArgumentException("Invalid case number! Must be between 0 and " + (getNumberOfCases()-1));
 	}
 
 	/**
@@ -37,8 +38,7 @@ public class VocabularyBox {
 	{
 		if(size <= 0)
 			throw new IllegalArgumentException("The number of cases must be greater than 0!");
-		
-		this.size = size;
+
 		cases = new Queue[size];
 		for(int i=0; i<size; i++)
 		{
@@ -61,7 +61,7 @@ public class VocabularyBox {
 	 */
 	public int getNumberOfCases()
 	{
-		return size;
+		return cases.length;
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class VocabularyBox {
 	 */
 	public int find(String vocab)
 	{
-		for(int i=0; i<size; i++)
+		for(int i=0; i<getNumberOfCases(); i++)
 		{
 			if(cases[i].contains(vocab))
 				return i;
@@ -104,7 +104,7 @@ public class VocabularyBox {
 	 */
 	public boolean remove(String vocab)
 	{
-		for(int i=0; i<size; i++)
+		for(int i=0; i<getNumberOfCases(); i++)
 		{
 			if(cases[i].remove(vocab))
 				return true;
@@ -134,7 +134,7 @@ public class VocabularyBox {
 	 * @return The first vocabulary in the case with the number caseNo or null if that case is empty.
 	 * @throws IllegalArgumentException if caseNo is not in [0,size[.
 	 */
-	public String getVocabInCase(int caseNo)
+	public String getNextVocabInCase(int caseNo)
 	{
 		checkCaseNo(caseNo);
 		
@@ -142,7 +142,7 @@ public class VocabularyBox {
 	}
 	
 	/**
-	 * Answers the vocabulary got by getVocabInCase(). Answering means it is removed from the current case and inserted 
+	 * Answers the vocabulary got by getNextVocabInCase(). Answering means it is removed from the current case and inserted 
 	 * into the next one (respectively it stays in the last case since there is no next one) if it was answered correctly 
 	 * or it is put back into case 0 if it was answered wrong.
 	 * 
@@ -157,7 +157,7 @@ public class VocabularyBox {
 		
 		if(correct)
 		{
-			int nextCase = Math.min(size-1, caseNo+1);
+			int nextCase = Math.min(getNumberOfCases()-1, caseNo+1);
 			cases[nextCase].add(cases[caseNo].remove());
 		}
 		else
@@ -185,8 +185,8 @@ public class VocabularyBox {
 	 */
 	public int[] getCaseVolumes()
 	{
-		int[] res = new int[size];
-		for(int i=0; i<size; i++)
+		int[] res = new int[getNumberOfCases()];
+		for(int i=0; i<res.length; i++)
 		{
 			res[i] = cases[i].size();
 		}
@@ -201,7 +201,7 @@ public class VocabularyBox {
 	public int getVolume()
 	{
 		int res = 0;
-		for(int i=0; i<size; i++)
+		for(int i=0; i<getNumberOfCases(); i++)
 		{
 			res += cases[i].size();
 		}
