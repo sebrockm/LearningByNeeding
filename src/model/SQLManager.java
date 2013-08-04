@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.sql.*;
 import java.util.Collections;
 import java.util.Comparator;
@@ -145,9 +144,15 @@ public class SQLManager {
 
 			@Override
 			public int compare(String[] arg0, String[] arg1) {
-				int diff = arg0[0].length() - arg1[0].length();
-				if(diff != 0)
-					return diff;
+				int len0 = arg0[0].length();
+				if(arg0[2].equals("verb") && arg0[0].startsWith("to "))
+					len0 -= 3;
+				int len1 = arg1[0].length();
+				if(arg1[2].equals("verb") && arg1[0].startsWith("to "))
+					len1 -= 3;
+				
+				if(len0 != len1)
+					return len0 - len1;
 				
 				return arg0[1].length() - arg1[1].length();
 			}
@@ -222,12 +227,15 @@ public class SQLManager {
 				else
 				{
 					int c = Integer.parseInt(line);
-					System.out.println(box.getVocabInCase(c));
+					System.out.println(box.getNextVocabInCase(c));
 					buf.readLine();
-					List<String[]> germans = myMgr.searchForEnglish(box.getVocabInCase(c), true);
+					List<String[]> germans = myMgr.searchForEnglish(box.getNextVocabInCase(c), true);
+					int count = 0;
 					for(String[] g : germans)
 					{
 						System.out.println(g[0] + " - " + g[1] + "\t" + g[2]);
+						if(++count >= 20)
+							break;
 					}
 					System.out.println("your answer was correct (j)?");
 					box.answerVocabInCase(c, buf.readLine().equals("j"));	
