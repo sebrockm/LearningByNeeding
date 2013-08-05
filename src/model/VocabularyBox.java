@@ -1,5 +1,11 @@
 package model;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.NoSuchElementException;
@@ -52,6 +58,43 @@ public class VocabularyBox implements Serializable{
 	public VocabularyBox()
 	{
 		this(5);
+	}
+	
+	/**
+	 * Deserializes a VocabularyBox from a file.
+	 * 
+	 * @param path Path to the file to deserialize from.
+	 * @return A new VocabularyBox object read from path.
+	 * @throws FileNotFoundException if the given file does not exist
+	 * @throws IOException if an IO error occurs
+	 * @throws ClassNotFoundException if the class of the serialized object cannot be found
+	 */
+	public static VocabularyBox loadFromFile(String path) throws FileNotFoundException, IOException, ClassNotFoundException
+	{
+		ObjectInputStream ois;
+		ois = new ObjectInputStream(new FileInputStream(path));
+		
+		VocabularyBox ret = (VocabularyBox)ois.readObject();
+		ois.close();
+		
+		return ret;
+	}
+	
+	/**
+	 * Serializes the VocabularyBox into the given path.
+	 * 
+	 * @param path Path to the file where to store the VocabularyBox in.
+	 * @throws FileNotFoundException if the given file does not exist
+	 * @throws IOException if an IO error occurs
+	 */
+	public void storeInFile(String path) throws FileNotFoundException, IOException
+	{
+		ObjectOutputStream oos;
+		oos = new ObjectOutputStream(new FileOutputStream(path));
+		
+		oos.writeObject(this);
+		
+		oos.close();
 	}
 	
 	/**
