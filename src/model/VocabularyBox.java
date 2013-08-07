@@ -13,6 +13,7 @@ import java.util.Queue;
 import java.util.LinkedList;
 
 
+
 /**
  * This class represents a learning system for vocabularies. A VocabularyBox consists of (usually) 5 cases with the
  * numbers 0, 1, 2, 3, 4. Case 0 contains those vocabularies you do not know yet while the case with the highest number contains those
@@ -250,5 +251,51 @@ public class VocabularyBox implements Serializable{
 		}
 		
 		return res;
+	}
+	
+	/**
+	 * Creates a new instance of VocabularyBox that contains all vocabularies of this and die other box.
+	 * Neither this nor the other box will change their inner state. If this box has n cases and the other one has m
+	 * cases, the resulting box will have max(n,m) cases. All copied vocabularies will be inserted
+	 * into their old case number. As an exception of this there is the case that a vocabulary is contained in both 
+	 * boxes, this and other. In this case it is inserted only once namely into the lower one of both cases.
+	 * 
+	 * @param other The other VocabularyBox this box will be merged with.
+	 * @return A new VocabularyBox containing the vocabularies of this and other in their original cases.
+	 */
+	public VocabularyBox merge(VocabularyBox other)
+	{
+		VocabularyBox box = new VocabularyBox(Math.max(this.getNumberOfCases(), other.getNumberOfCases()));
+		
+		for(int i=0; i<this.getNumberOfCases(); i++)
+		{
+			for(int j=0; j<this.cases[i].size(); j++)
+			{
+				box.cases[i].add(this.cases[i].element());
+				this.cases[i].add(this.cases[i].remove());
+			}
+		}
+		
+		for(int i=0; i<other.getNumberOfCases(); i++)
+		{
+			for(int j=0; j<other.cases[i].size(); j++)
+			{
+				String vocab = other.cases[i].element();
+				int found = box.find(vocab);
+				if(found < 0)//box does not contain vocab jet
+				{
+					box.cases[i].add(vocab);
+				}
+				else if(found > i)//box does already contain vocab, so let's put it into the lower of both prior cases
+				{
+					box.remove(vocab);
+					box.cases[i].add(vocab);
+				}
+
+				other.cases[i].add(other.cases[i].remove());
+			}
+		}
+		
+		return box;
 	}
 }
