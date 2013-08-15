@@ -4,6 +4,11 @@ import java.awt.CardLayout;
 
 import javax.swing.*;
 
+/**
+ * GUI for the VocabularyBox.
+ * @author Sebastian Brockmeyer
+ *
+ */
 @SuppressWarnings("serial")
 public class VocabularyBoxView extends JFrame 
 {

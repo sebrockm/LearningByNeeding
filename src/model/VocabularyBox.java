@@ -66,7 +66,7 @@ public class VocabularyBox implements Serializable
 	 * Deserializes a VocabularyBox from a file.
 	 * 
 	 * @param path Path to the file to deserialize from.
-	 * @return A new VocabularyBox object read from path.
+	 * @return A new VocabularyBox object read from <tt>path</tt>.
 	 * @throws ClassNotFoundException if the class of the serialized object cannot be found
 	 * @throws IOException 
 	 */
@@ -123,7 +123,7 @@ public class VocabularyBox implements Serializable
 	 * none of the cases contains it.
 	 * 
 	 * @param vocab The vocabulary searched for.
-	 * @return The number of the case vocab were found in or -1 if vocab was not found in any of the cases.
+	 * @return The number of the case <tt>vocab</tt> were found in or -1 if <tt>vocab</tt> was not found in any of the cases.
 	 */
 	public int find(String vocab)
 	{
@@ -141,8 +141,8 @@ public class VocabularyBox implements Serializable
 	 * 
 	 * @param vocab The vocabulary searched for.
 	 * @param caseNo The number of the case searched in.
-	 * @return true if the given case contains vocab, false otherwise
-	 * @throws IllegalArgumentException if caseNo is not in [0,size[. 
+	 * @return true if the given case contains <tt>vocab</tt>, false otherwise
+	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[. 
 	 */
 	public boolean find(String vocab, int caseNo)
 	{
@@ -154,7 +154,7 @@ public class VocabularyBox implements Serializable
 	/**
 	 * Removes a vocabulary from the VocabularyBox if it is contained.
 	 * @param vocab The vocabulary to remove.
-	 * @return true if the removal was successful, false otherwise i.e. <param>vocab</param> was not found in the VocabularyBox.
+	 * @return true if the removal was successful, false otherwise i.e. <tt>vocab</tt> was not found in the VocabularyBox.
 	 */
 	public boolean remove(String vocab)
 	{
@@ -171,7 +171,7 @@ public class VocabularyBox implements Serializable
 	 * Inserts a new vocabulary into case 0 of the VocabularyBox if it is not contained in any of the cases.
 	 * 
 	 * @param vocab The vocabulary to insert.
-	 * @return true if insertion was successful, false otherwise (probably because vocab is already in the VocabularyBox).
+	 * @return true if insertion was successful, false otherwise (probably because <tt>vocab</tt> is already in the VocabularyBox).
 	 */
 	public boolean insert(String vocab)
 	{
@@ -186,7 +186,7 @@ public class VocabularyBox implements Serializable
 	 * 
 	 * @param caseNo The number of the case the vocabulary is taken from.
 	 * @return The first vocabulary in the case with the number caseNo or null if that case is empty.
-	 * @throws IllegalArgumentException if caseNo is not in [0,size[.
+	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
 	 */
 	public String getNextVocabInCase(int caseNo)
 	{
@@ -203,7 +203,7 @@ public class VocabularyBox implements Serializable
 	 * @param caseNo The number of the case the answered vocabulary was taken from.
 	 * @param correct Must be true if the answer was correct and false otherwise.
 	 * @throws NoSuchElementException if the given case is empty.
-	 * @throws IllegalArgumentException if caseNo is not in [0,size[.
+	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
 	 */
 	public void answerVocabInCase(int caseNo, boolean correct)
 	{
@@ -224,7 +224,7 @@ public class VocabularyBox implements Serializable
 	 * Shuffles a case due to learning the vocabularies themselves instead of their sequence.
 	 * 
 	 * @param caseNo The number of the case to be shuffled.
-	 * @throws IllegalArgumentException if caseNo is not in [0,size[.
+	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
 	 */
 	public void shuffleCase(int caseNo)
 	{
@@ -271,7 +271,7 @@ public class VocabularyBox implements Serializable
 	 * boxes, this and other. In this case it is inserted only once namely into the lower one of both cases.
 	 * 
 	 * @param other The other VocabularyBox this box will be merged with.
-	 * @return A new VocabularyBox containing the vocabularies of this and other in their original cases.
+	 * @return A new VocabularyBox containing the vocabularies of <tt>this</tt> and <tt>other</tt> in their original cases.
 	 */
 	public VocabularyBox merge(VocabularyBox other)
 	{

@@ -9,7 +9,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 
-
+/**
+ * 
+ * @author Sebastian Brockmeyer
+ *
+ */
 public class SystemTrayView extends TrayIcon
 {
 	
@@ -17,6 +21,7 @@ public class SystemTrayView extends TrayIcon
 	private final JMenuItem openVocabularyBoxItem;
 	private final JMenuItem manualInsertItem;
 	private final JCheckBoxMenuItem autoInsertItem;
+	private final JMenuItem undoLastInsertItem;
 	private final JMenuItem exitItem;
 	
 	private final VocabularyBoxView vboxView;
@@ -29,6 +34,10 @@ public class SystemTrayView extends TrayIcon
 		this.displayMessage(null, message, MessageType.INFO);
 	}
 	
+	/**
+	 * Creates an icon in the system tray providing a popup with some functionality.
+	 * @param iconPath path to an image file used for the icon
+	 */
 	public SystemTrayView(String iconPath)
 	{
 		super(new ImageIcon(iconPath).getImage(), "LearningByNeeding", null);
@@ -54,6 +63,7 @@ public class SystemTrayView extends TrayIcon
 		openVocabularyBoxItem = new JMenuItem("open vocabulary box");
 		manualInsertItem = new JMenuItem("manual insert");
 		autoInsertItem = new JCheckBoxMenuItem("auto insert on Ctrl+C", true);
+		undoLastInsertItem = new JMenuItem("undo last insert");
 		exitItem = new JMenuItem("exit");
 		
 		
@@ -74,7 +84,14 @@ public class SystemTrayView extends TrayIcon
 			public void itemStateChanged(ItemEvent arg0) {
 				handleAutoInsertStateChange(arg0.getStateChange() == ItemEvent.SELECTED);				
 			}
-		}); 
+		});
+		undoLastInsertItem.addItemListener(new ItemListener(){
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}		
+		});
 		exitItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -122,7 +139,11 @@ public class SystemTrayView extends TrayIcon
 		
 	}
 	
-	public boolean getAutoInsertOnCtrlC()
+	/**
+	 * Determines if the 'auto insert on Ctrl+C' option is selected.
+	 * @return true if 'auto insert on Ctrl+C' is selected, false otherwise
+	 */
+	public boolean isAutoInsertOnCtrlCSelected()
 	{
 		return autoInsertItem.isSelected();
 	}

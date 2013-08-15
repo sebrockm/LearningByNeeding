@@ -11,6 +11,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * This class is used to get access to a vocabulary database using sqlite.
+ * @author Sebastian Brockmeyer
+ *
+ */
 public class SQLManager {
 	
 	private static String sqliteDriver = "org.sqlite.JDBC";
@@ -41,6 +46,11 @@ public class SQLManager {
 		}
 	}
 	
+	/**
+	 * Creates a new SQLManager with a connection to the database given by <tt>databasePath</tt>.
+	 * If the given file does not exist, it will be created.
+	 * @param databasePath path to the database
+	 */
 	public SQLManager(String databasePath)
 	{		
 		try {
@@ -53,11 +63,20 @@ public class SQLManager {
 		switchDatabase(databasePath);
 	}
 	
+	/**
+	 * Retrieves the path to the database.
+	 * @return path to database
+	 */
 	public String getDatabasePath()
 	{
 		return databasePath;
 	}
 	
+	/**
+	 * Closes the connection to the old database and connects to the database given by
+	 * <tt>databasePath</tt> instead. If the given file does not exist, it will be created.
+	 * @param databasePath path to the new database
+	 */
 	public void switchDatabase(String databasePath)
 	{
 		try {
@@ -73,6 +92,9 @@ public class SQLManager {
 		}
 	}
 	
+	/**
+	 * Truncates the database, i.e. the table isn't dropped but it's contents are deleted.
+	 */
 	public void truncate()
 	{
 		try {
@@ -87,6 +109,13 @@ public class SQLManager {
 		}
 	}
 	
+	/**
+	 * Inserts a new entry into the database.
+	 * @param english English meaning of the vocabulary
+	 * @param german German meaning of the vocabulary
+	 * @param type the type of the word, e.g. noun
+	 * @return true if the new entry could be inserted, false otherwise
+	 */
 	public boolean insertEntry(String english, String german, String type)
 	{
 		boolean res = false;
@@ -106,6 +135,16 @@ public class SQLManager {
 		return res;
 	}
 	
+	/**
+	 * Inserts entries from a text file given by <tt>path</tt>. The text file must have the
+	 * following scheme: 
+	 * 1) a line beginning with '#' will be ignored
+	 * 2) any other line must begin with an English word, followed by a '\t' and the German meaning and then (optionally)
+	 * followed by another '\t' and the word type.
+	 * @param path the path to the text file
+	 * @return the number of inserted entries
+	 * @throws FileNotFoundException if the file given by <tt>path</tt> was not found
+	 */
 	public int insertEntriesFromFile(String path) throws FileNotFoundException
 	{
 		BufferedReader r = new BufferedReader(new FileReader(path));
@@ -167,6 +206,12 @@ public class SQLManager {
 		return counter;
 	}
 	
+	/**
+	 * Searches for an English word and returns a list of entries matching that word.
+	 * @param english the word to be searched for
+	 * @param like if true, the SQL query uses 'LIKE'
+	 * @return a list of String triples {english, german, type} where english matches the parameter <tt>english</tt>
+	 */
 	public List<String[]> searchForEnglish(String english, boolean like)
 	{
 		String select = "SELECT * FROM EnglishGerman WHERE english ";
@@ -213,6 +258,12 @@ public class SQLManager {
 		return res;
 	}
 	
+	/**
+	 * Searches for an German word and returns a list of entries matching that word.
+	 * @param german the word to be searched for
+	 * @param like if true, the SQL query uses 'LIKE'
+	 * @return a list of String triples {german, english, type} where german matches the parameter <tt>german</tt>
+	 */
 	public List<String[]> searchForGerman(String german, boolean like)
 	{
 		String select = "SELECT * FROM EnglishGerman WHERE german ";
@@ -253,6 +304,9 @@ public class SQLManager {
 		return res;
 	}
 	
+	/**
+	 * Closes the connection to the database.
+	 */
 	public void close()
 	{
 		if(connection != null)
