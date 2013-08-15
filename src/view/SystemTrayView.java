@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.*;
-import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -11,21 +10,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 
 
-public class SystemTrayView {
+public class SystemTrayView extends TrayIcon
+{
 	
-	@SuppressWarnings("serial")
-	public class SystemTrayNotSupportedException extends Exception
-	{
-		public SystemTrayNotSupportedException(String info)
-		{
-			super(info);
-		}
-	}
-	
-	private final TrayIcon trayIcon;
 	private final JPopupMenu popup;
 	private final JMenuItem openVocabularyBoxItem;
-	private final JMenuItem manuelInsertItem;
+	private final JMenuItem manualInsertItem;
 	private final JCheckBoxMenuItem autoInsertItem;
 	private final JMenuItem exitItem;
 	
@@ -36,13 +26,15 @@ public class SystemTrayView {
 	private void handleAutoInsertStateChange(boolean on)
 	{
 		String message = "By Ctrl+C copied text is " + (on?"":"no longer ") + "automatically inserted into vocabulary box now.";
-		trayIcon.displayMessage(null, message, MessageType.INFO);
+		this.displayMessage(null, message, MessageType.INFO);
 	}
 	
-	public SystemTrayView(String iconPath) throws SystemTrayNotSupportedException
+	public SystemTrayView(String iconPath)
 	{
+		super(new ImageIcon(iconPath).getImage(), "LearningByNeeding", null);
+		
 		if(!SystemTray.isSupported())
-			throw new SystemTrayNotSupportedException("system tray is not supported");
+			throw new RuntimeException("system tray is not supported");
 		
 
 		vboxView = new VocabularyBoxView();
@@ -56,12 +48,11 @@ public class SystemTrayView {
 		insertDialog.setBounds(10, 10, 250, insertDialog.getComponent(0).getHeight());
 		insertDialog.setLocationByPlatform(true);
 
-		trayIcon = new TrayIcon(new ImageIcon(iconPath).getImage(), "LearningByNeeding", null);
-		trayIcon.setImageAutoSize(true);
+		this.setImageAutoSize(true);
 		
 		popup = new JPopupMenu();
 		openVocabularyBoxItem = new JMenuItem("open vocabulary box");
-		manuelInsertItem = new JMenuItem("manual insert");
+		manualInsertItem = new JMenuItem("manual insert");
 		autoInsertItem = new JCheckBoxMenuItem("auto insert on Ctrl+C", true);
 		exitItem = new JMenuItem("exit");
 		
@@ -72,7 +63,7 @@ public class SystemTrayView {
 				vboxView.setVisible(true);	
 			}			
 		});		
-		manuelInsertItem.addActionListener(new ActionListener(){
+		manualInsertItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				insertDialog.setVisible(true);	
@@ -83,11 +74,10 @@ public class SystemTrayView {
 			public void itemStateChanged(ItemEvent arg0) {
 				handleAutoInsertStateChange(arg0.getStateChange() == ItemEvent.SELECTED);				
 			}
-		});
+		}); 
 		exitItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				SystemTray.getSystemTray().remove(trayIcon);
 				System.exit(0);
 			}
 		});
@@ -95,13 +85,13 @@ public class SystemTrayView {
 		popup.setLabel("LerningByNeeding");
 		popup.add(openVocabularyBoxItem);
 		popup.addSeparator();
-		popup.add(manuelInsertItem);
+		popup.add(manualInsertItem);
 		popup.add(autoInsertItem);
 		popup.addSeparator();		
 		popup.add(exitItem);
 		
 		//hack for TrayIcon working with swing
-		trayIcon.addMouseListener(new MouseAdapter() {
+		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
@@ -125,42 +115,15 @@ public class SystemTrayView {
 		
 		
 		try {
-			SystemTray.getSystemTray().add(trayIcon);
+			SystemTray.getSystemTray().add(this);
 		} catch (AWTException e) {
-			throw new SystemTrayNotSupportedException("unable to add tray icon to system tray");
+			throw new RuntimeException("unable to add tray icon to system tray");
 		}
 		
 	}
 	
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e1) {
-			e1.printStackTrace();
-		}
-		
-		SwingUtilities.invokeLater(new Runnable(){
-			public void run()
-			{
-				try {
-					new SystemTrayView("images/Lernkartei.gif");
-				} catch (SystemTrayNotSupportedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
+	public boolean getAutoInsertOnCtrlC()
+	{
+		return autoInsertItem.isSelected();
 	}
-
 }

@@ -24,7 +24,8 @@ import java.util.LinkedList;
  * "freedom" is stored in the VocabularyBox.
  * 
  */
-public class VocabularyBox implements Serializable{
+public class VocabularyBox implements Serializable
+{
 
 	private static final long serialVersionUID = 1917951796892188357L;
 	
@@ -66,17 +67,22 @@ public class VocabularyBox implements Serializable{
 	 * 
 	 * @param path Path to the file to deserialize from.
 	 * @return A new VocabularyBox object read from path.
-	 * @throws FileNotFoundException if the given file does not exist
-	 * @throws IOException if an IO error occurs
 	 * @throws ClassNotFoundException if the class of the serialized object cannot be found
+	 * @throws IOException 
 	 */
-	public static VocabularyBox loadFromFile(String path) throws FileNotFoundException, IOException, ClassNotFoundException
+	public static VocabularyBox loadFromFile(String path) throws ClassNotFoundException, IOException
 	{
 		ObjectInputStream ois;
-		ois = new ObjectInputStream(new FileInputStream(path));
+		VocabularyBox ret;
 		
-		VocabularyBox ret = (VocabularyBox)ois.readObject();
-		ois.close();
+		ois = new ObjectInputStream(new FileInputStream(path));
+		try {	
+			ret = (VocabularyBox)ois.readObject();
+			ois.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("IOException occured:\n" + e.getMessage());
+		}
 		
 		return ret;
 	}
@@ -86,16 +92,20 @@ public class VocabularyBox implements Serializable{
 	 * 
 	 * @param path Path to the file where to store the VocabularyBox in.
 	 * @throws FileNotFoundException if the given file does not exist
-	 * @throws IOException if an IO error occurs
 	 */
-	public void storeInFile(String path) throws FileNotFoundException, IOException
+	public void storeInFile(String path) throws FileNotFoundException
 	{
 		ObjectOutputStream oos;
-		oos = new ObjectOutputStream(new FileOutputStream(path));
-		
-		oos.writeObject(this);
-		
-		oos.close();
+		try {
+			oos = new ObjectOutputStream(new FileOutputStream(path));
+			
+			oos.writeObject(this);
+			
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("IOException occured:\n" + e.getMessage());
+		}
 	}
 	
 	/**
