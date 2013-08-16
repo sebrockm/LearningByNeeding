@@ -9,6 +9,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 
+import model.SQLManager;
+import model.VocabularyBox;
+
 /**
  * 
  * @author Sebastian Brockmeyer
@@ -38,7 +41,7 @@ public class SystemTrayView extends TrayIcon
 	 * Creates an icon in the system tray providing a popup with some functionality.
 	 * @param iconPath path to an image file used for the icon
 	 */
-	public SystemTrayView(String iconPath)
+	public SystemTrayView(String iconPath, VocabularyBox box, SQLManager manager)
 	{
 		super(new ImageIcon(iconPath).getImage(), "LearningByNeeding", null);
 		
@@ -46,7 +49,7 @@ public class SystemTrayView extends TrayIcon
 			throw new RuntimeException("system tray is not supported");
 		
 
-		vboxView = new VocabularyBoxView();
+		vboxView = new VocabularyBoxView(box, this.getImage(), manager);
 		vboxView.setVisible(false);
 		
 		insertDialog = new JDialog();

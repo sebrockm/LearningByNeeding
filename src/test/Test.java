@@ -15,7 +15,7 @@ import controller.ContentInserter;
 public class Test {
 
 	private static final String dbPath = "test.db";
-	private static final String vbPath = "test.vb";
+	private static final String vbPath = "test2.vb";
 	private static final String iconPath = "images/Lernkartei.gif";
 	
 	private static final VocabularyBox box;
@@ -82,7 +82,7 @@ public class Test {
 		try 
 		{
 			tmpsql = new SQLManager(dbPath);
-			tmpview = new SystemTrayView(iconPath);
+			tmpview = new SystemTrayView(iconPath, tmpbox, tmpsql);
 			tmpclip = new ClipboardManager();
 		} 
 		catch (Exception e)
