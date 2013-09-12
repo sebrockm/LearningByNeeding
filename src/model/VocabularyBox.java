@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.LinkedList;
@@ -27,9 +28,55 @@ import java.util.LinkedList;
 public class VocabularyBox implements Serializable
 {
 
-	private static final long serialVersionUID = 1917951796892188357L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3149647846060599036L;
+
+	private class VocabularyCard
+	{
+		public String english;
+		public List<String> germans;
+		
+		public VocabularyCard(String english)
+		{
+			this.english = english;
+			this.germans = new LinkedList<String>();
+		}
+		
+		public boolean addGerman(String german)
+		{
+			if(!germans.contains(german))
+			{
+				germans.add(german);
+				return true;
+			}
+			return false;
+		}
+		
+		public boolean removeGerman(String german)
+		{
+			return germans.remove(german);
+		}
+		
+		public boolean removeGerman(int index)
+		{
+			return germans.remove(index) == null;
+		}
+		
+		@Override
+		public boolean equals(Object other)
+		{
+			if(other instanceof VocabularyCard)
+			{
+				return this.english.equals(((VocabularyCard)other).english);
+			}
+			return false;
+		}
+	}
+
 	
-	private Queue<String>[] cases;
+	private Queue<VocabularyCard>[] cases;
 	
 	private void checkCaseNo(int caseNo)
 	{
@@ -50,7 +97,7 @@ public class VocabularyBox implements Serializable
 		cases = new Queue[size];
 		for(int i=0; i<size; i++)
 		{
-			cases[i] = new LinkedList<String>();
+			cases[i] = new LinkedList<VocabularyCard>();
 		}
 	}
 		
@@ -129,7 +176,7 @@ public class VocabularyBox implements Serializable
 	{
 		for(int i=0; i<getNumberOfCases(); i++)
 		{
-			if(cases[i].contains(vocab))
+			if(cases[i].contains(new VocabularyCard(vocab)))
 				return i;
 		}
 		
@@ -148,7 +195,7 @@ public class VocabularyBox implements Serializable
 	{
 		checkCaseNo(caseNo);
 		
-		return cases[caseNo].contains(vocab);
+		return cases[caseNo].contains(new VocabularyCard(vocab));
 	}
 	
 	/**
@@ -160,7 +207,7 @@ public class VocabularyBox implements Serializable
 	{
 		for(int i=0; i<getNumberOfCases(); i++)
 		{
-			if(cases[i].remove(vocab))
+			if(cases[i].remove(new VocabularyCard(vocab)))
 				return true;
 		}
 		
@@ -176,7 +223,7 @@ public class VocabularyBox implements Serializable
 	public boolean insert(String vocab)
 	{
 		if(find(vocab) < 0)
-			return cases[0].add(vocab);
+			return cases[0].add(new VocabularyCard(vocab));
 		
 		return false;
 	}
@@ -191,8 +238,18 @@ public class VocabularyBox implements Serializable
 	public String getNextVocabInCase(int caseNo)
 	{
 		checkCaseNo(caseNo);
+		if(cases[caseNo].isEmpty())
+			return null;
+		return cases[caseNo].peek().english;
+	}
+	
+	public List<String> getMeaningsOfNextVocabInCase(int caseNo)
+	{
+		checkCaseNo(caseNo);
+		if(cases[caseNo].isEmpty())
+			return null;
 		
-		return cases[caseNo].peek();
+		return cases[caseNo].peek().germans;
 	}
 	
 	/**
@@ -220,6 +277,39 @@ public class VocabularyBox implements Serializable
 		}
 	}
 	
+	public boolean addMeaningToVocabInCase(int caseNo, String meaning)
+	{
+		checkCaseNo(caseNo);
+		
+		if(cases[caseNo].isEmpty())
+		{
+			return false;
+		}
+		return cases[caseNo].peek().addGerman(meaning);
+	}
+	
+	public boolean removeMeaningFromVocabInCase(int caseNo, String meaning)
+	{
+		checkCaseNo(caseNo);
+		
+		if(cases[caseNo].isEmpty())
+		{
+			return false;
+		}
+		return cases[caseNo].peek().removeGerman(meaning);
+	}
+	
+	public boolean removeMeaningFromVocabInCase(int caseNo, int index)
+	{
+		checkCaseNo(caseNo);
+		
+		if(cases[caseNo].isEmpty())
+		{
+			return false;
+		}
+		return cases[caseNo].peek().removeGerman(index);
+	}
+	
 	/**
 	 * Shuffles a case due to learning the vocabularies themselves instead of their sequence.
 	 * 
@@ -230,12 +320,12 @@ public class VocabularyBox implements Serializable
 	{
 		checkCaseNo(caseNo);
 		
-		Collections.shuffle((LinkedList<String>)cases[caseNo]);
+		Collections.shuffle((LinkedList<VocabularyCard>)cases[caseNo]);
 	}
 	
 	/**
 	 * Retrieves an array indicating the amount of vocabularies in each case.
-	 * @return An array indicating the the amount of vocabularies in each case.
+	 * @return An array indicating the amount of vocabularies in each case.
 	 */
 	public int[] getCaseVolumes()
 	{
@@ -290,15 +380,15 @@ public class VocabularyBox implements Serializable
 		{
 			for(int j=0; j<other.cases[i].size(); j++)
 			{
-				String vocab = other.cases[i].element();
-				int found = box.find(vocab);
+				VocabularyCard vocab = other.cases[i].element();
+				int found = box.find(vocab.english);
 				if(found < 0)//box does not contain vocab jet
 				{
 					box.cases[i].add(vocab);
 				}
 				else if(found > i)//box does already contain vocab, so let's put it into the lower of both prior cases
 				{
-					box.remove(vocab);
+					box.remove(vocab.english);
 					box.cases[i].add(vocab);
 				}
 
