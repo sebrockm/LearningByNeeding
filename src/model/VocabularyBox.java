@@ -20,9 +20,7 @@ import java.util.LinkedList;
  * numbers 0, 1, 2, 3, 4. Case 0 contains those vocabularies you do not know yet while the case with the highest number contains those
  * you (should) know very well. Every time you answer a vocabulary correctly it is put into the next case
  * (respectively it stays in the last case since there is no next case). If your answer was wrong, the vocabulary goes
- * back into case 0. The Vocabularies are only stored with their foreign language part. The counter part
- * in your native language has to be looked up somewhere else. E.g. if you are a German learning the pair "freedom - Freiheit", only
- * "freedom" is stored in the VocabularyBox.
+ * back into case 0. 
  * 
  */
 public class VocabularyBox implements Serializable
@@ -33,17 +31,32 @@ public class VocabularyBox implements Serializable
 	 */
 	private static final long serialVersionUID = -3149647846060599036L;
 
+	/**
+	 * 
+	 * Inner class to represent a vocabulary card.
+	 * A VocabularyCard contains a vocab in the foreign language and a list of translations of it.
+	 *
+	 */
 	private class VocabularyCard
 	{
-		public String english;
-		public List<String> germans;
+		private String english;
+		private List<String> germans;
 		
+		/**
+		 * Creates a new VocabularyCard with a foreign language vocab and an empty list of translations
+		 * @param english The vocab in the foreign language
+		 */
 		public VocabularyCard(String english)
 		{
 			this.english = english;
 			this.germans = new LinkedList<String>();
 		}
 		
+		/**
+		 * Adds a new translation to this card.
+		 * @param german translation to add
+		 * @return false if the card already contains this translation, true if successfully added
+		 */
 		public boolean addGerman(String german)
 		{
 			if(!germans.contains(german))
@@ -54,14 +67,24 @@ public class VocabularyBox implements Serializable
 			return false;
 		}
 		
+		/**
+		 * Removes a translation from this card.
+		 * @param german translation to remove
+		 * @return false if the card does not contain this translation, true if successfully removed
+		 */
 		public boolean removeGerman(String german)
 		{
 			return germans.remove(german);
 		}
 		
+		/**
+		 * Removes the translation at the given index.
+		 * @param index index of the translation in the list
+		 * @return true if successfully returned, false otherwise
+		 */
 		public boolean removeGerman(int index)
 		{
-			return germans.remove(index) == null;
+			return germans.remove(index) != null;
 		}
 		
 		@Override
@@ -69,9 +92,20 @@ public class VocabularyBox implements Serializable
 		{
 			if(other instanceof VocabularyCard)
 			{
-				return this.english.equals(((VocabularyCard)other).english);
+				VocabularyCard c = (VocabularyCard)other;
+				return this.english.equals(c.english);
 			}
 			return false;
+		}
+		
+		public String getEnglish()
+		{
+			return english;
+		}
+		
+		public List<String> getGermans()
+		{
+			return germans;
 		}
 	}
 
@@ -240,16 +274,22 @@ public class VocabularyBox implements Serializable
 		checkCaseNo(caseNo);
 		if(cases[caseNo].isEmpty())
 			return null;
-		return cases[caseNo].peek().english;
+		return cases[caseNo].peek().getEnglish();
 	}
 	
-	public List<String> getMeaningsOfNextVocabInCase(int caseNo)
+	/**
+	 * Gets a list of translations of the first vocabulary of the given case or null if that case is empty.
+	 * @param caseNo the number of the case
+	 * @return a list of translations of the first vocabulary in the case with number caseNo or null if that case is empty.
+	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
+	 */
+	public List<String> getTranslationsOfNextVocabInCase(int caseNo)
 	{
 		checkCaseNo(caseNo);
 		if(cases[caseNo].isEmpty())
 			return null;
 		
-		return cases[caseNo].peek().germans;
+		return cases[caseNo].peek().getGermans();
 	}
 	
 	/**
@@ -277,7 +317,14 @@ public class VocabularyBox implements Serializable
 		}
 	}
 	
-	public boolean addMeaningToVocabInCase(int caseNo, String meaning)
+	/**
+	 * Adds a translation to the first vocabulary card in the given case.
+	 * @param caseNo The number of the case
+	 * @param german the translation to add
+	 * @return true if successfully added, false if the card does already have this translation
+	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
+	 */
+	public boolean addTranslationToVocabInCase(int caseNo, String german)
 	{
 		checkCaseNo(caseNo);
 		
@@ -285,10 +332,17 @@ public class VocabularyBox implements Serializable
 		{
 			return false;
 		}
-		return cases[caseNo].peek().addGerman(meaning);
+		return cases[caseNo].peek().addGerman(german);
 	}
 	
-	public boolean removeMeaningFromVocabInCase(int caseNo, String meaning)
+	/**
+	 * Removes a translation from the first vocabulary card in the given case.
+	 * @param caseNo the number of the case
+	 * @param german the translation to remove
+	 * @return true if successfully removed, false if the card does not have this translation
+	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
+	 */
+	public boolean removeTranslationFromVocabInCase(int caseNo, String german)
 	{
 		checkCaseNo(caseNo);
 		
@@ -296,10 +350,18 @@ public class VocabularyBox implements Serializable
 		{
 			return false;
 		}
-		return cases[caseNo].peek().removeGerman(meaning);
+		return cases[caseNo].peek().removeGerman(german);
 	}
 	
-	public boolean removeMeaningFromVocabInCase(int caseNo, int index)
+	/**
+	 * Removes a translation from the first vocabulary card in the given case at the given 
+	 * index of the list of translations of that card.
+	 * @param caseNo the number of the case
+	 * @param index the index of the translation to remove
+	 * @return true if successfully removed, false otherwise
+	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
+	 */
+	public boolean removeTranslationFromVocabInCase(int caseNo, int index)
 	{
 		checkCaseNo(caseNo);
 		
