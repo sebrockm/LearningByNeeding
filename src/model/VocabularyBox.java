@@ -37,10 +37,14 @@ public class VocabularyBox implements Serializable
 	 * A VocabularyCard contains a vocab in the foreign language and a list of translations of it.
 	 *
 	 */
-	private class VocabularyCard
+	public class VocabularyCard implements Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2500453800565619402L;
 		private String english;
-		private List<String> germans;
+		private List<String[]> germans;
 		
 		/**
 		 * Creates a new VocabularyCard with a foreign language vocab and an empty list of translations
@@ -49,7 +53,7 @@ public class VocabularyBox implements Serializable
 		public VocabularyCard(String english)
 		{
 			this.english = english;
-			this.germans = new LinkedList<String>();
+			this.germans = new LinkedList<String[]>();
 		}
 		
 		/**
@@ -57,7 +61,7 @@ public class VocabularyBox implements Serializable
 		 * @param german translation to add
 		 * @return false if the card already contains this translation, true if successfully added
 		 */
-		public boolean addGerman(String german)
+		public boolean addGerman(String[] german)
 		{
 			if(!germans.contains(german))
 			{
@@ -72,7 +76,7 @@ public class VocabularyBox implements Serializable
 		 * @param german translation to remove
 		 * @return false if the card does not contain this translation, true if successfully removed
 		 */
-		public boolean removeGerman(String german)
+		public boolean removeGerman(String[] german)
 		{
 			return germans.remove(german);
 		}
@@ -103,7 +107,7 @@ public class VocabularyBox implements Serializable
 			return english;
 		}
 		
-		public List<String> getGermans()
+		public List<String[]> getGermans()
 		{
 			return germans;
 		}
@@ -249,7 +253,7 @@ public class VocabularyBox implements Serializable
 	}
 	
 	/**
-	 * Inserts a new vocabulary into case 0 of the VocabularyBox if it is not contained in any of the cases.
+	 * Inserts a new vocabulary at the end of case 0 of the VocabularyBox if it is not contained in any case.
 	 * 
 	 * @param vocab The vocabulary to insert.
 	 * @return true if insertion was successful, false otherwise (probably because <tt>vocab</tt> is already in the VocabularyBox).
@@ -260,6 +264,11 @@ public class VocabularyBox implements Serializable
 			return cases[0].add(new VocabularyCard(vocab));
 		
 		return false;
+	}
+	
+	public boolean insert(VocabularyCard card)
+	{
+		return cases[0].add(card);
 	}
 	
 	/**
@@ -283,7 +292,7 @@ public class VocabularyBox implements Serializable
 	 * @return a list of translations of the first vocabulary in the case with number caseNo or null if that case is empty.
 	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
 	 */
-	public List<String> getTranslationsOfNextVocabInCase(int caseNo)
+	public List<String[]> getTranslationsOfNextVocabInCase(int caseNo)
 	{
 		checkCaseNo(caseNo);
 		if(cases[caseNo].isEmpty())
@@ -320,29 +329,31 @@ public class VocabularyBox implements Serializable
 	/**
 	 * Adds a translation to the first vocabulary card in the given case.
 	 * @param caseNo The number of the case
+	 * @param pos position of the card in the case, front is 0
 	 * @param german the translation to add
 	 * @return true if successfully added, false if the card does already have this translation
 	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
 	 */
-	public boolean addTranslationToVocabInCase(int caseNo, String german)
+	public boolean addTranslationToVocabInCase(int caseNo, int pos, String[] german)
 	{
 		checkCaseNo(caseNo);
 		
-		if(cases[caseNo].isEmpty())
+		if(pos < 0 || pos >= cases[caseNo].size())
 		{
 			return false;
 		}
-		return cases[caseNo].peek().addGerman(german);
+		return ((LinkedList<VocabularyCard>)cases[caseNo]).get(pos).addGerman(german);
 	}
 	
 	/**
 	 * Removes a translation from the first vocabulary card in the given case.
 	 * @param caseNo the number of the case
+	 * @param pos position of the card in the case, front is 0
 	 * @param german the translation to remove
 	 * @return true if successfully removed, false if the card does not have this translation
 	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
 	 */
-	public boolean removeTranslationFromVocabInCase(int caseNo, String german)
+	public boolean removeTranslationFromVocabInCase(int caseNo, int pos, String german[])
 	{
 		checkCaseNo(caseNo);
 		
@@ -350,18 +361,19 @@ public class VocabularyBox implements Serializable
 		{
 			return false;
 		}
-		return cases[caseNo].peek().removeGerman(german);
+		return ((LinkedList<VocabularyCard>)cases[caseNo]).get(pos).removeGerman(german);
 	}
 	
 	/**
 	 * Removes a translation from the first vocabulary card in the given case at the given 
 	 * index of the list of translations of that card.
 	 * @param caseNo the number of the case
+	 * @param pos position of the card in the case, front is 0
 	 * @param index the index of the translation to remove
 	 * @return true if successfully removed, false otherwise
 	 * @throws IllegalArgumentException if <tt>caseNo</tt> is not in [0,size[.
 	 */
-	public boolean removeTranslationFromVocabInCase(int caseNo, int index)
+	public boolean removeTranslationFromVocabInCase(int caseNo, int pos, int index)
 	{
 		checkCaseNo(caseNo);
 		
@@ -369,7 +381,7 @@ public class VocabularyBox implements Serializable
 		{
 			return false;
 		}
-		return cases[caseNo].peek().removeGerman(index);
+		return ((LinkedList<VocabularyCard>)cases[caseNo]).get(pos).removeGerman(index);
 	}
 	
 	/**
@@ -415,7 +427,7 @@ public class VocabularyBox implements Serializable
 		return res;
 	}
 	
-	/**
+	/**TODO
 	 * Creates a new instance of VocabularyBox that contains all vocabularies of this and die other box.
 	 * Neither this nor the other box will change their inner state. If this box has n cases and the other one has m
 	 * cases, the resulting box will have max(n,m) cases. All copied vocabularies will be inserted

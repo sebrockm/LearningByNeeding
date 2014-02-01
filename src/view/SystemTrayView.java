@@ -18,8 +18,7 @@ import model.VocabularyBox;
  *
  */
 public class SystemTrayView extends TrayIcon
-{
-	
+{	
 	private final JPopupMenu popup;
 	private final JMenuItem openVocabularyBoxItem;
 	private final JMenuItem manualInsertItem;
@@ -28,9 +27,8 @@ public class SystemTrayView extends TrayIcon
 	private final JMenuItem exitItem;
 	
 	private final VocabularyBoxView vboxView;
-	private final JDialog insertDialog;
-	private final JTextField insertDialogTextField;
-
+	private final JDialog manualInsertDialog;
+	
 	private void handleAutoInsertStateChange(boolean on)
 	{
 		String message = "By Ctrl+C copied text is " + (on?"":"no longer ") + "automatically inserted into vocabulary box now.";
@@ -52,13 +50,13 @@ public class SystemTrayView extends TrayIcon
 		vboxView = new VocabularyBoxView(box, this.getImage(), manager);
 		vboxView.setVisible(false);
 		
-		insertDialog = new JDialog();
-		insertDialog.setVisible(false);
-		insertDialog.add(new JLabel("new vocabulary:"));
-		insertDialog.add(insertDialogTextField = new JTextField());
-		insertDialog.setLayout(new GridLayout(1, 2));
-		insertDialog.setBounds(10, 10, 250, insertDialog.getComponent(0).getHeight());
-		insertDialog.setLocationByPlatform(true);
+		manualInsertDialog = new JDialog();
+		manualInsertDialog.setVisible(false);
+		manualInsertDialog.add(new JLabel("new vocabulary:"));
+		manualInsertDialog.add(new JTextField());
+		manualInsertDialog.setLayout(new GridLayout(1, 2));
+		manualInsertDialog.setBounds(10, 10, 250, manualInsertDialog.getComponent(0).getHeight());
+		manualInsertDialog.setLocationByPlatform(true);
 
 		this.setImageAutoSize(true);
 		
@@ -79,7 +77,7 @@ public class SystemTrayView extends TrayIcon
 		manualInsertItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				insertDialog.setVisible(true);	
+				manualInsertDialog.setVisible(true);	
 			}			
 		});
 		autoInsertItem.addItemListener(new ItemListener() {			

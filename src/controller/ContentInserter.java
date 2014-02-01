@@ -5,12 +5,15 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import view.SystemTrayView;
+import view.AfterInsertionPopup;
 
 import model.SQLManager;
 import model.VocabularyBox;
+import model.VocabularyBox.VocabularyCard;
 
 
 /**
@@ -28,6 +31,7 @@ public class ContentInserter implements ClipboardContentChangeListener
 	private VocabularyBox box;
 	private SystemTrayView view;
 	private SQLManager manager;
+	private AfterInsertionPopup popup;
 	
 	/**
 	 * Creates a new ContentInserter.
@@ -50,33 +54,45 @@ public class ContentInserter implements ClipboardContentChangeListener
 		try{
 			if(content.isDataFlavorSupported(DataFlavor.stringFlavor))
 			{
-				String display;
-				String vocab = (String) content.getTransferData(DataFlavor.stringFlavor);
-				vocab = vocab.trim();
+				String display = "";
+				String vocabu = (String) content.getTransferData(DataFlavor.stringFlavor);
+				final String vocab = vocabu.trim();
+					
+				final List<String[]> germans = manager.searchForEnglish(vocab, true);
 				
-				if(box.insert(vocab))
+				int caseNo = box.find(vocab);
+				if(caseNo < 0)
 				{
-					display = "'" + vocab + "' has been inserted into vocabulary box";
-					List<String[]> germans = manager.searchForEnglish(vocab, true);
 					if(germans.isEmpty())
 					{
-						display += ", but was not found in database";
+						display = "'" + vocab + "' was not found in database";
 						view.displayMessage(null, display, MessageType.WARNING);
 					}
 					else
 					{
-						for(int i=0; i<10 && i<germans.size(); i++)
-						{
-							String[] line = germans.get(i);
-							display += "\n" + line[0] + " - " + line[1] + "\t" + line[2];
-						}
-						view.displayMessage(null, display, MessageType.NONE);
+						popup = new AfterInsertionPopup(germans);
+						popup.setFinalAction(new FinalAction<LinkedList<Integer>>(){
+
+							@Override
+							public void run(LinkedList<Integer> param) {
+								VocabularyCard card = box.new VocabularyCard(vocab);
+								box.insert(card);
+								for(int i : param)
+								{
+									card.addGerman(germans.get(i));
+								}
+							}
+							
+						});
+						
 					}
 				}
 				else
 				{
-					display = "'" + vocab + "' is already in the vocabulary box";
+					popup = new AfterInsertionPopup(germans);
+					display = "'" + vocab + "' is already in the vocabulary box in case " + (caseNo+1);
 					view.displayMessage(null, display, MessageType.INFO);
+					//TODO display card
 				}
 				
 				System.out.println(display);// for debugging
