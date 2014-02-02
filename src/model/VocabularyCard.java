@@ -2,17 +2,16 @@ package model;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 
 
 /**
- * 
- * Inner class to represent a vocabulary card.
+ * Class to represent a vocabulary card.
  * A VocabularyCard contains a vocab in the foreign language and a list of translations of it.
  *
+ * @author Sebastian Brockmeyer
  */
 public class VocabularyCard implements Serializable
 {
@@ -85,14 +84,9 @@ public class VocabularyCard implements Serializable
 		return english;
 	}
 	
-	public List<String[]> getGermans()
+	public List<List<String>> getGermans()
 	{
-		List<String[]> list = new LinkedList<String[]>();
-		for(List<String> l : germans)
-		{
-			list.add((String[]) l.toArray());
-		}
-		return list;
+		return germans;
 	}
 	
 	public VocabularyCard merge(VocabularyCard other)
