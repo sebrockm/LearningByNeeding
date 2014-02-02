@@ -15,7 +15,7 @@ import controller.ContentInserter;
 public class Test {
 
 	private static final String dbPath = "test.db";
-	private static final String vbPath = "test2.vb";
+	private static final String vbPath = "test.vobo";
 	private static final String iconPath = "images/Lernkartei.gif";
 
 	private static final VocabularyBox box;
@@ -79,6 +79,9 @@ public class Test {
 		sql = tmpsql;
 		view = tmpview;
 		clip = tmpclip;
+		
+		view.setDatabaseFile(dbPath);
+		view.setVbFile(vbPath);
 	}
 
 	/**
