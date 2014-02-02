@@ -129,15 +129,7 @@ public class SystemTrayView extends TrayIcon {
 		popup.add(openVbChooser);
 		popup.addSeparator();
 		popup.add(exitItem);
-		
-		popup.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Z) {
-					System.out.println("strg-Z");
-				}
-			}
-		});
+
 
 		// hack for TrayIcon working with swing
 		this.addMouseListener(new MouseAdapter() {
