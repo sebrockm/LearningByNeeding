@@ -126,7 +126,6 @@ public class ContentInserter implements ClipboardContentChangeListener {
 				view.displayMessage(null, display, MessageType.INFO);
 			}
 			System.out.println(display);// for debugging
-			System.out.println(box.getVolume());
 			
 		} catch (UnsupportedFlavorException e) {
 			e.printStackTrace();
