@@ -126,19 +126,13 @@ public class VocabularyBoxCaseView extends JPanel
 		
 		if(turn.isVisible())
 		{
-			card.setText(box.getNextVocabInCase(caseNo));
+			if(box.getCaseVolumes()[caseNo] > 0)
+			{
+				card.setText(box.getNextVocabInCase(caseNo).getEnglish());
+			}
 		}
 		else
 		{
-			String text = "<html>";
-			List<String[]> germans = sql.searchForEnglish(box.getNextVocabInCase(caseNo), true);
-			for(int i=0; i<8 && i<germans.size(); i++)
-			{
-				String[] line = germans.get(i);
-				text += line[0] + " - " + line[1] + "    " + line[2] + "<br/>";
-			}
-			text += "</html>";
-			card.setText(text);
 		}
 	}
 }

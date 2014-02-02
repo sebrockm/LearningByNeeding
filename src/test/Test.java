@@ -2,6 +2,7 @@ package test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -102,7 +103,6 @@ public class Test {
 	 */
 	public static void main(String[] args) 
 	{
-
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			@Override
 			public void run()

@@ -13,7 +13,7 @@ import view.AfterInsertionPopup;
 
 import model.SQLManager;
 import model.VocabularyBox;
-import model.VocabularyBox.VocabularyCard;
+import model.VocabularyCard;
 
 
 /**
@@ -75,7 +75,7 @@ public class ContentInserter implements ClipboardContentChangeListener
 
 							@Override
 							public void run(LinkedList<Integer> param) {
-								VocabularyCard card = box.new VocabularyCard(vocab);
+								VocabularyCard card = new VocabularyCard(vocab);
 								box.insert(card);
 								for(int i : param)
 								{
