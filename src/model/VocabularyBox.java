@@ -240,7 +240,6 @@ public class VocabularyBox implements Serializable {
 	 *         successful, false otherwise
 	 */
 	public boolean insert(VocabularyCard card) {
-		System.out.println("VocabularyBox.insert("+card.getEnglish()+")");
 		int caseNo = find(card.getEnglish());
 		if (caseNo < 0) {
 			return cases[0].add(card);
