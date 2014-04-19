@@ -1,23 +1,22 @@
 package view;
 
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileSystemView;
-import javax.swing.filechooser.FileView;
-
 import model.SQLManager;
 import model.VocabularyBox;
 
@@ -35,7 +34,9 @@ public class SystemTrayView extends TrayIcon {
 	private final JMenuItem openVbChooser;
 	private final JMenuItem exitItem;
 
-	private final VocabularyBoxView vboxView;
+	//private final VocabularyBoxView vboxView;
+	private final VocabularyBoxWindow vboxView;
+	private final SQLManager manager;
 	private final JFileChooser databaseChooser;
 	private final JFileChooser vbChooser;
 	
@@ -61,7 +62,10 @@ public class SystemTrayView extends TrayIcon {
 		if (!SystemTray.isSupported())
 			throw new RuntimeException("system tray is not supported");
 
-		vboxView = new VocabularyBoxView(box, this.getImage(), manager);
+		this.manager = manager;
+		
+		//vboxView = new VocabularyBoxWindow(box, this.getImage(), manager);
+		vboxView = new VocabularyBoxWindow(box, this.getImage());
 		vboxView.setVisible(false);
 		
 		databaseChooser = new JFileChooser(new File(System.getProperty("user.dir")));
@@ -95,7 +99,7 @@ public class SystemTrayView extends TrayIcon {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(databaseChooser.showOpenDialog(openDatabaseChooser) == JFileChooser.APPROVE_OPTION) {
-					setDatabaseFile(databaseChooser.getSelectedFile());
+					setDatabaseFile(databaseChooser.getSelectedFile().getAbsoluteFile());
 				}
 			}		
 		});
@@ -103,7 +107,7 @@ public class SystemTrayView extends TrayIcon {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(vbChooser.showOpenDialog(openDatabaseChooser) == JFileChooser.APPROVE_OPTION) {
-					setVbFile(vbChooser.getSelectedFile());
+					setVbFile(vbChooser.getSelectedFile().getAbsoluteFile());
 				}
 			}
 		});
@@ -171,6 +175,7 @@ public class SystemTrayView extends TrayIcon {
 	public void setDatabaseFile(File file) {
 		databaseFile = file;
 		databaseChooser.setSelectedFile(file);
+		manager.switchDatabase(file.getAbsolutePath());
 	}
 	
 	public void setVbFile(File file) {

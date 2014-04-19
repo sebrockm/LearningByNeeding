@@ -1,5 +1,6 @@
 package test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -14,9 +15,10 @@ import controller.ContentInserter;
 
 public class Test {
 
-	private static final String dbPath = "test.db";
-	private static final String vbPath = "test.vobo";
-	private static final String iconPath = "images/Lernkartei.gif";
+	private static final String dbPath = System.getProperty("user.dir") + File.separator + "test.db";
+	private static final String vbPath = System.getProperty("user.dir") + File.separator + "test.vobo";
+	private static final String iconPath = System.getProperty("user.dir") + File.separator + 
+			"images" + File.separator + "Lernkartei.gif";
 
 	private static final VocabularyBox box;
 	private static final SQLManager sql;
