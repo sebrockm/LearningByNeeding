@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
@@ -17,11 +16,14 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import controller.FinalAction;
+
 public class VocabularyBoxWindow {
 
 	private JFrame frame;
 	private VocabularyBox box;
 	private JPanel[] panels;
+	private JLabel[] labels;
 
 	/**
 	 * Launch the application.
@@ -32,6 +34,7 @@ public class VocabularyBoxWindow {
 				try {
 					VocabularyBoxWindow window = new VocabularyBoxWindow(VocabularyBox.loadFromFile("test.vobo"));
 					window.frame.setVisible(true);
+					window.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -52,9 +55,8 @@ public class VocabularyBoxWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("/images/Lernkartei.gif"));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/Lernkartei.gif"));
 		frame.setPreferredSize(new Dimension(450, 300));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
@@ -62,26 +64,43 @@ public class VocabularyBoxWindow {
 		
 		int caseCount = box==null ? 5 : box.getNumberOfCases();
 		panels = new JPanel[caseCount];
+		labels = new JLabel[caseCount];
 		
 		for(int i = 0; i < caseCount; i++) {
 			panels[i] = new JPanel();
 			tabbedPane.addTab("case " + (i+1), panels[i]);
 			panels[i].setLayout(new BoxLayout(panels[i], BoxLayout.PAGE_AXIS));
-			panels[i].add(new JLabel(box.getCaseVolumes()[i] + " vocabularies in case " + (i+1)));
-			panels[i].add(new JLabel("vokabel"));
-			JButton open = new JButton("open");
+			labels[i] = new JLabel();
+			panels[i].add(labels[i]);
+			final JButton open = new JButton("open");
 			panels[i].add(open);
-			open.addActionListener(new ActionListener() {
-				
+			
+			final int ii = i;
+			final ActionListener al = new ActionListener() {		
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					// TODO Auto-generated method stub
-					
+					final ActionListener fthis = this;
+					new VocabularyCardWindow(box.getNextVocabInCase(ii), new FinalAction<Boolean>() {
+						@Override
+						public void run(Boolean b) {
+							if(b != null) {
+								box.answerVocabInCase(ii, b);
+								setText();
+								fthis.actionPerformed(null);
+							}
+						}
+					});
 				}
-			});
+			};
+			open.addActionListener(al);
 		}
-		
+		setText();
 		frame.pack();
 	}
 
+	private void setText() {
+		for(int i = 0; i < labels.length; i++) {
+			labels[i].setText(box.getCaseVolumes()[i] + " vocabularies in case " + (i+1));
+		}
+	}
 }

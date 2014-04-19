@@ -24,8 +24,8 @@ import controller.FinalAction;
  * @author Sebastian Brockmeyer
  * 
  */
+@SuppressWarnings("serial")
 public class AfterInsertionPopup extends JFrame {
-	private static final long serialVersionUID = 1L;
 
 	private final JTable table;
 	private final Timer timer;
@@ -58,8 +58,6 @@ public class AfterInsertionPopup extends JFrame {
 
 		final DefaultTableModel model = new DefaultTableModel(data,
 				new String[] { "English", "Deutsch", "Typ", "aufnehmen" }) {
-			private static final long serialVersionUID = 1L;
-
 			@Override
 			public Class<?> getColumnClass(int id) {
 				if (id == 3)
