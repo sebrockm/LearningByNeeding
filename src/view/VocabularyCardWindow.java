@@ -4,14 +4,23 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeListener;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 
 import controller.FinalAction;
@@ -35,6 +44,7 @@ public class VocabularyCardWindow {
 	private FinalAction<Boolean> callback = null;
 	private Boolean correct = null;
 	
+	@SuppressWarnings("serial")
 	private void initialize() {
 		frame.setVisible(true);
 		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
@@ -78,7 +88,14 @@ public class VocabularyCardWindow {
 					frame.pack();
 				}
 			});
-	
+			turn.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('t'), "turn");
+			turn.getActionMap().put("turn", new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					turn.doClick();
+				}
+			});
+			
 			right.setVisible(false);
 			frame.add(right);
 			right.addActionListener(new ActionListener() {
@@ -86,6 +103,13 @@ public class VocabularyCardWindow {
 				public void actionPerformed(ActionEvent e) {
 					correct = true;
 					frame.dispose();
+				}
+			});
+			right.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('r'), "right");
+			right.getActionMap().put("right", new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					right.doClick();
 				}
 			});
 			
@@ -96,6 +120,13 @@ public class VocabularyCardWindow {
 				public void actionPerformed(ActionEvent e) {
 					correct = false;
 					frame.dispose();
+				}
+			});
+			wrong.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('w'), "wrong");
+			wrong.getActionMap().put("wrong", new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					wrong.doClick();
 				}
 			});
 			
