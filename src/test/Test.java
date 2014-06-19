@@ -1,5 +1,6 @@
 package test;
 
+import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -94,9 +95,12 @@ public class Test {
 			@Override
 			public void run() {
 				try {
-					box.storeInFile(vbPath);
+					box.storeInFile(view.getVbFile().getAbsolutePath());
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
+					view.displayMessage("ERROR", 
+							"writing to " + view.getVbFile().getAbsolutePath() + " failed",
+							MessageType.ERROR);
 				}
 				sql.close();
 			}
@@ -107,7 +111,15 @@ public class Test {
 
 		try {
 			while (true) {
-				Thread.sleep(100000L);
+				Thread.sleep(60000L);//one minute
+				try {
+					box.storeInFile(view.getVbFile().getAbsolutePath());
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					view.displayMessage("ERROR", 
+							"writing to " + view.getVbFile().getAbsolutePath() + " failed",
+							MessageType.ERROR);
+				}
 			}
 		} catch (InterruptedException e) {
 		}
