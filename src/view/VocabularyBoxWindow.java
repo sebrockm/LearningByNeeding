@@ -85,4 +85,8 @@ public class VocabularyBoxWindow extends JFrame {
 			labels[i].setText(box.getCaseVolumes()[i] + " vocabularies in case " + (i+1));
 		}
 	}
+	
+	public void updateText() {
+		setText();
+	}
 }

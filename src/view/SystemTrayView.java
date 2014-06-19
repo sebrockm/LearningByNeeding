@@ -87,6 +87,7 @@ public class SystemTrayView extends TrayIcon {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				vboxView.setVisible(true);
+				vboxView.updateText();
 			}
 		});
 		autoInsertItem.addItemListener(new ItemListener() {
