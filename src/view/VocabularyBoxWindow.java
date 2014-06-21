@@ -28,7 +28,7 @@ public class VocabularyBoxWindow extends JFrame {
 	 * Create the application.
 	 */
 	public VocabularyBoxWindow(VocabularyBox box, Image image) {
-		super();
+		super("Vocabulary Box");
 		this.setIconImage(image);
 		this.box = box;
 		initialize();
@@ -48,7 +48,7 @@ public class VocabularyBoxWindow extends JFrame {
 		panels = new JPanel[caseCount];
 		labels = new JLabel[caseCount];
 		
-		for(int i = 0; i < caseCount; i++) {
+		for(int i = caseCount-1; i >= 0; i--) {
 			panels[i] = new JPanel();
 			tabbedPane.addTab("case " + (i+1), panels[i]);
 			panels[i].setLayout(new BoxLayout(panels[i], BoxLayout.PAGE_AXIS));
@@ -58,23 +58,37 @@ public class VocabularyBoxWindow extends JFrame {
 			panels[i].add(open);
 			
 			final int ii = i;
-			final ActionListener al = new ActionListener() {		
+			
+			final JButton shuffle = new JButton("shuffle");
+			panels[i].add(shuffle);
+			shuffle.addActionListener(new ActionListener() {	
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					box.shuffleCase(ii);
+				}
+			});
+			
+			open.addActionListener(new ActionListener() {		
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
+					shuffle.setEnabled(false);
+					
 					final ActionListener fthis = this;
 					new VocabularyCardWindow(box.getNextVocabInCase(ii), new FinalAction<Boolean>() {
 						@Override
 						public void run(Boolean b) {
+							shuffle.setEnabled(true);
 							if(b != null) {
 								box.answerVocabInCase(ii, b);
 								setText();
-								fthis.actionPerformed(null);
+								fthis.actionPerformed(null);//recursively invoke new card
 							}
 						}
 					});
 				}
-			};
-			open.addActionListener(al);
+			});
+			
+			
 		}
 		setText();
 		this.pack();

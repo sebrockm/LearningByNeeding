@@ -4,15 +4,10 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -32,7 +27,7 @@ import model.VocabularyCard;
  *
  */
 public class VocabularyCardWindow {
-	private final JFrame frame = new JFrame();
+	private final JFrame frame = new JFrame("Vocabulary Card");
 	private final JLabel english = new JLabel();
 	private final JTable german = new JTable();
 	private final JButton turn = new JButton("turn");
@@ -58,7 +53,6 @@ public class VocabularyCardWindow {
 				data[i] = card.getGermans().get(i).toArray();
 			}
 			
-			@SuppressWarnings("serial")
 			final DefaultTableModel model = new DefaultTableModel(data,
 					new String[] { "English", "Deutsch", "Typ", "löschen" }) {
 				@Override
@@ -132,13 +126,14 @@ public class VocabularyCardWindow {
 			
 			frame.addWindowListener(new WindowAdapter() {
 				@Override
-				public void windowClosed(WindowEvent arg0) {
+				public void windowClosing(WindowEvent arg0) {
 					callback.run(correct);
 				}
 			});
 		}
 		frame.setPreferredSize(new Dimension(450, 300));
 		frame.pack();
+		frame.requestFocus();
 	}
 	
 	public VocabularyCardWindow(final VocabularyCard card, FinalAction<Boolean> callback) {
