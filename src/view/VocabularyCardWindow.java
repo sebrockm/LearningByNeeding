@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -126,10 +125,11 @@ public class VocabularyCardWindow {
 			
 			frame.addWindowListener(new WindowAdapter() {
 				@Override
-				public void windowClosing(WindowEvent arg0) {
+				public void windowClosed(WindowEvent arg0) {
 					callback.run(correct);
 				}
 			});
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		}
 		frame.setPreferredSize(new Dimension(450, 300));
 		frame.pack();
@@ -141,20 +141,5 @@ public class VocabularyCardWindow {
 		this.callback = callback;
 		initialize();
 	}
-	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VocabularyCard test = new VocabularyCard("test");
-					test.addGerman(new String[] {"Test"});
-					VocabularyCardWindow window = new VocabularyCardWindow(test, null);
-					window.frame.setVisible(true);
-					window.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+
 }
