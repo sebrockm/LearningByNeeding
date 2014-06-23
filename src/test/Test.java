@@ -16,10 +16,11 @@ import controller.ContentInserter;
 
 public class Test {
 
-	private static final String dbPath = System.getProperty("user.dir") + File.separator + "test.db";
+	private static final String dbPath = System.getProperty("user.dir") + File.separator + 
+			"res" + File.separator + "test.db";
 	private static final String vbPath = System.getProperty("user.dir") + File.separator + "test.vobo";
 	private static final String iconPath = System.getProperty("user.dir") + File.separator + 
-			"images" + File.separator + "Lernkartei.gif";
+			"res" + File.separator + "/Lernkartei.gif";
 
 	private static final VocabularyBox box;
 	private static final SQLManager sql;

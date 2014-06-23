@@ -58,7 +58,7 @@ public class SQLManager {
 			throw new RuntimeException("ClassNotFoundException occured:\n"
 					+ e.getMessage());
 		}
-
+		
 		switchDatabase(databasePath);
 	}
 
