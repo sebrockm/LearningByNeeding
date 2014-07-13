@@ -112,13 +112,15 @@ public class Test {
 
 		try {
 			while (true) {
-				Thread.sleep(60000L);//one minute
+				Thread.sleep(60*60*1000L);//one hour
+				String file = System.getProperty("user.dir") + File.separator + ".backup" + 
+						System.currentTimeMillis() + ".vobo";
 				try {
-					box.storeInFile(view.getVbFile().getAbsolutePath());
+					box.storeInFile(file);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 					view.displayMessage("ERROR", 
-							"writing to " + view.getVbFile().getAbsolutePath() + " failed",
+							"writing to " + file + " failed",
 							MessageType.ERROR);
 				}
 			}

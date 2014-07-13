@@ -95,8 +95,8 @@ public class VocabularyBox implements Serializable {
 	 * @throws FileNotFoundException
 	 *             if the given file does not exist
 	 */
-	public void storeInFile(String path) throws FileNotFoundException {
-		ObjectOutputStream oos;
+	public synchronized void storeInFile(String path) throws FileNotFoundException {
+		ObjectOutputStream oos = null;
 		try {
 			oos = new ObjectOutputStream(new FileOutputStream(path));
 
@@ -107,6 +107,13 @@ public class VocabularyBox implements Serializable {
 			e.printStackTrace();
 			throw new RuntimeException("IOException occured:\n"
 					+ e.getMessage());
+		} finally {
+			if(oos != null) {
+				try {
+					oos.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 	}
 
