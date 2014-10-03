@@ -84,6 +84,11 @@ public class VocabularyCard implements Serializable
 		return english;
 	}
 	
+	public void setEnglish(String english)
+	{
+		this.english = english;
+	}
+	
 	public List<List<String>> getGermans()
 	{
 		return germans;

@@ -5,6 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
@@ -15,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import controller.FinalAction;
@@ -48,19 +54,48 @@ public class VocabularyCardWindow {
 		
 		if(card != null) {
 			Object[][] data = new Object[card.getGermans().size()][];
-			for(int i = 0; i < data.length; i ++) {
+			for(int i = 0; i < data.length; i++) {
 				data[i] = card.getGermans().get(i).toArray();
 			}
 			
 			final DefaultTableModel model = new DefaultTableModel(data,
-					new String[] { "English", "Deutsch", "Typ", "löschen" }) {
+					new String[] { "English", "Deutsch", "Typ", "löschen", "use"}) {
 				@Override
 				public Class<?> getColumnClass(int id) {
-					if (id == 3)
+					if (id == 3 || id == 4)
 						return Boolean.class;
 					return String.class;
 				}
 			};
+			final LinkedList<List<String>> toDelete = new LinkedList<>();
+			model.addTableModelListener(new TableModelListener() {
+				@Override
+				public void tableChanged(TableModelEvent arg0) {
+					if(arg0.getType() == TableModelEvent.UPDATE) {
+						if(arg0.getColumn() == 3) {
+							if(model.getValueAt(arg0.getFirstRow(), arg0.getColumn()).equals(Boolean.FALSE)) {
+								toDelete.remove(card.getGermans().get(arg0.getFirstRow()));
+							}
+							else{
+								toDelete.add(card.getGermans().get(arg0.getFirstRow()));
+							}
+						} else if(arg0.getColumn() == 4) {
+							if(model.getValueAt(arg0.getFirstRow(), 4).equals(Boolean.TRUE)) {
+								//unset all others
+								for(int i = 0; i < model.getRowCount(); ++i) {
+									if(i != arg0.getFirstRow()) {
+										model.setValueAt(false, i, 4);
+									}
+								}
+								String nEng = (String)model.getValueAt(arg0.getFirstRow(), 0);
+								System.out.println("new Enlish: " + nEng);
+								card.setEnglish(nEng);
+							}
+						}
+					}
+				}
+			});
+			
 			german.setModel(model);
 			german.setVisible(false);
 			
@@ -95,6 +130,9 @@ public class VocabularyCardWindow {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					correct = true;
+					for(List<String> del : toDelete) {
+						card.removeGerman((String[])del.toArray());
+					}
 					frame.dispose();
 				}
 			});
@@ -112,6 +150,11 @@ public class VocabularyCardWindow {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					correct = false;
+					for(List<String> del : toDelete) {
+						if(card.removeGerman((String[])del.toArray()))
+							System.out.println("removed " + del.get(0));
+						else System.out.println("failed to remove " + del.get(0));
+					}
 					frame.dispose();
 				}
 			});

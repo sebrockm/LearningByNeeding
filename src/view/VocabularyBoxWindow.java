@@ -12,8 +12,6 @@ import model.VocabularyBox;
 import javax.swing.BoxLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -86,7 +84,12 @@ public class VocabularyBoxWindow extends JFrame {
 						@Override
 						public void run(Boolean b) {
 							shuffle.setEnabled(true);
-							if(b != null) {
+							
+							//remove card if all translations have been removed
+							if(box.getNextVocabInCase(ii).getGermans().isEmpty()) {
+								box.remove(box.getNextVocabInCase(ii));
+								setText();
+							} else if(b != null) {
 								if(ii == 0 && !dropdown.getSelectedItem().equals(new Integer(0))) {
 									box.answerVocabInCaseZeroWithLimit((Integer)dropdown.getSelectedItem()-1, b);
 								}
