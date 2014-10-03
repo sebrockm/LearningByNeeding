@@ -101,8 +101,7 @@ public class VocabularyBox implements Serializable {
 			oos = new ObjectOutputStream(new FileOutputStream(path));
 
 			oos.writeObject(this);
-
-			oos.close();
+			System.out.println("VocabularyBox written to " + path);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("IOException occured:\n"
@@ -299,6 +298,30 @@ public class VocabularyBox implements Serializable {
 			cases[nextCase].add(cases[caseNo].remove());
 		} else {
 			cases[0].add(cases[caseNo].remove());
+		}
+	}
+	
+	/**
+	 * Similar to answerVocabInCase() but only applicable for case 0.
+	 * If the answer is not correct, the card is at most <tt>limit<tt>
+	 * positions put back instead of put back to the end.
+	 * 
+	 * @param limit
+	 * 			Maximum number of positions the card is put back.
+	 * @param correct
+	 * 			Must be true if the answer was correct and false otherwise.
+	 * @throws IllegalArgumentException
+	 * 			if <tt>limit<tt> is negative.
+	 */
+	public void answerVocabInCaseZeroWithLimit(int limit, boolean correct) {
+		if(limit < 0)
+			throw new IllegalArgumentException("limit must be non-negative");
+		
+		if(correct) {
+			cases[Math.min(1, cases.length-1)].add(cases[0].remove());
+		} else {
+			limit = Math.min(limit, cases[0].size()-1);
+			cases[0].add(limit, cases[0].remove());
 		}
 	}
 

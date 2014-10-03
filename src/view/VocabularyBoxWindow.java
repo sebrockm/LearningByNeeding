@@ -3,6 +3,7 @@ package view;
 import java.awt.Dimension;
 import java.awt.Image;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
@@ -11,6 +12,8 @@ import model.VocabularyBox;
 import javax.swing.BoxLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -57,6 +60,11 @@ public class VocabularyBoxWindow extends JFrame {
 			final JButton open = new JButton("open");
 			panels[i].add(open);
 			
+			final JComboBox<Integer> dropdown = new JComboBox<>(new Integer[] {0, 5, 10, 15, 20, 25});
+			if(i == 0) {
+				panels[i].add(dropdown);
+			}
+			
 			final int ii = i;
 			
 			final JButton shuffle = new JButton("shuffle");
@@ -79,7 +87,12 @@ public class VocabularyBoxWindow extends JFrame {
 						public void run(Boolean b) {
 							shuffle.setEnabled(true);
 							if(b != null) {
-								box.answerVocabInCase(ii, b);
+								if(ii == 0 && !dropdown.getSelectedItem().equals(new Integer(0))) {
+									box.answerVocabInCaseZeroWithLimit((Integer)dropdown.getSelectedItem()-1, b);
+								}
+								else {
+									box.answerVocabInCase(ii, b);
+								}
 								setText();
 								fthis.actionPerformed(null);//recursively invoke new card
 							}
